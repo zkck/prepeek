@@ -1,2 +1,3 @@
 # prepeek
-`peek` and `peek_nth` without mutation
+
+Peekable iterators without mutation.
