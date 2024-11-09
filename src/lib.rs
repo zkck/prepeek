@@ -1,5 +1,8 @@
 use std::usize;
 
+/// Wrapper struct to an iterator, offering `peek` and `peek_nth`.
+///
+/// Internally holds the next `L` elements to allow for peeking without `mut`.
 pub struct Prepeek<I: Iterator, const L: usize> {
     iter: I,
     ring: [Option<I::Item>; L],
@@ -7,6 +10,10 @@ pub struct Prepeek<I: Iterator, const L: usize> {
 }
 
 impl<I: Iterator, const L: usize> Prepeek<I, L> {
+
+    /// Creates a [`Prepeek`] object wrapping the given [`Iterator`].
+    ///
+    /// Calls next() `L` times on the iterator to fill up the internal buffer.
     pub fn new(iter: I) -> Self {
         let mut s = Self {
             iter,
