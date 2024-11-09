@@ -2,5 +2,7 @@
 name = "prepeek"
 version = "0.1.0"
 edition = "2021"
+description = "Peekable iterators without mutation."
+license = "MIT"
 
 [dependencies]
