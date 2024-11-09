@@ -32,6 +32,20 @@ impl<I: Iterator, const L: usize> Prepeek<I, L> {
     /// Like next, if there is a value, it is wrapped in a `Some(T)`. But if the iteration is over, `None` is returned.
     ///
     /// If `L` of this [`Prepeek`] object is 0, None is returned.
+    ///
+    /// # Examples
+    ///
+    /// Basic usage:
+    ///
+    /// ```
+    /// use prepeek::Prepeek;
+    ///
+    /// let xs = vec![1, 2, 3];
+    /// let mut iter = Prepeek::<_, 2>::new(xs.into_iter());
+    ///
+    /// assert_eq!(iter.peek(), Some(&1));
+    /// assert_eq!(iter.next(), Some(1));
+    /// ```
     pub fn peek(&self) -> Option<&I::Item> {
         self.peek_nth(0)
     }
@@ -39,6 +53,28 @@ impl<I: Iterator, const L: usize> Prepeek<I, L> {
     /// Returns a reference to the `nth` value without advancing the iterator.
     ///
     /// If `n` is greater or equal to `L`, None is returned.
+    ///
+    /// # Examples
+    ///
+    /// Basic usage:
+    ///
+    /// ```
+    /// use prepeek::Prepeek;
+    ///
+    /// let xs = vec![1, 2, 3];
+    /// let mut iter = Prepeek::<_, 2>::new(xs.into_iter());
+    ///
+    /// assert_eq!(iter.peek_nth(0), Some(&1));
+    /// assert_eq!(iter.peek_nth(1), Some(&2));
+    /// // Calling `peek_nth` with `n` greater or equal to `L` will return `None`
+    /// assert_eq!(iter.peek_nth(2), None);
+    ///
+    /// assert_eq!(iter.next(), Some(1));
+    /// assert_eq!(iter.next(), Some(2));
+    ///
+    /// // Calling `peek_nth` past the size of the iterator will return `None`
+    /// assert_eq!(iter.peek_nth(1), None);
+    /// ```
     pub fn peek_nth(&self, n: usize) -> Option<&I::Item> {
         if n >= L {
             None

@@ -1,8 +1,10 @@
 [package]
 name = "prepeek"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 description = "Peekable iterators without mutation."
 license = "MIT"
+keywords = ["iterator"]
+repository = "https://github.com/zkck/prepeek"
 
 [dependencies]
