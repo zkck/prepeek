@@ -3,5 +3,5 @@
 version = 3
 
 [[package]]
-name = "prefetch"
+name = "prepeek"
 version = "0.1.0"
