@@ -20,10 +20,18 @@ impl<I: Iterator, const L: usize> Prepeek<I, L> {
         s
     }
 
+    /// Returns a reference to the next() value without advancing the iterator.
+    ///
+    /// Like next, if there is a value, it is wrapped in a `Some(T)`. But if the iteration is over, `None` is returned.
+    ///
+    /// If `L` of this [`Prepeek`] object is 0, None is returned.
     pub fn peek(&self) -> Option<&I::Item> {
         self.peek_nth(0)
     }
 
+    /// Returns a reference to the `nth` value without advancing the iterator.
+    ///
+    /// If `n` is greater or equal to `L`, None is returned.
     pub fn peek_nth(&self, n: usize) -> Option<&I::Item> {
         if n >= L {
             None
