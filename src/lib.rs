@@ -10,7 +10,6 @@ pub struct Prepeek<I: Iterator, const L: usize> {
 }
 
 impl<I: Iterator, const L: usize> Prepeek<I, L> {
-
     /// Creates a [`Prepeek`] object wrapping the given [`Iterator`].
     ///
     /// Calls next() `L` times on the iterator to fill up the internal buffer.
@@ -47,7 +46,7 @@ impl<I: Iterator, const L: usize> Prepeek<I, L> {
     /// assert_eq!(iter.next(), Some(1));
     /// ```
     pub fn peek(&self) -> Option<&I::Item> {
-        self.peek_nth(0)
+        self.peek_nth::<0>()
     }
 
     /// Returns a reference to the `nth` value without advancing the iterator.
@@ -64,22 +63,23 @@ impl<I: Iterator, const L: usize> Prepeek<I, L> {
     /// let xs = vec![1, 2, 3];
     /// let mut iter = Prepeek::<_, 2>::new(xs.into_iter());
     ///
-    /// assert_eq!(iter.peek_nth(0), Some(&1));
-    /// assert_eq!(iter.peek_nth(1), Some(&2));
+    /// assert_eq!(iter.peek_nth::<0>(), Some(&1));
+    /// assert_eq!(iter.peek_nth::<1>(), Some(&2));
     /// // Calling `peek_nth` with `n` greater or equal to `L` will return `None`
-    /// assert_eq!(iter.peek_nth(2), None);
+    /// assert_eq!(iter.peek_nth::<2>(), None);
     ///
     /// assert_eq!(iter.next(), Some(1));
     /// assert_eq!(iter.next(), Some(2));
     ///
     /// // Calling `peek_nth` past the size of the iterator will return `None`
-    /// assert_eq!(iter.peek_nth(1), None);
+    /// assert_eq!(iter.peek_nth::<1>(), None);
     /// ```
-    pub fn peek_nth(&self, n: usize) -> Option<&I::Item> {
-        if n >= L {
+    pub fn peek_nth<const N: usize>(&self) -> Option<&I::Item> {
+        // hopefully checked at compile-time at some point
+        if N >= L {
             None
         } else {
-            self.ring[(self.ring_index + n) % L].as_ref()
+            self.ring[(self.ring_index + N) % L].as_ref()
         }
     }
 }
@@ -106,23 +106,23 @@ mod tests {
         let array = [1, 2, 3];
         let mut peekable = Prepeek::<_, 2>::new(array.into_iter());
         assert_eq!(peekable.peek().cloned(), Some(1));
-        assert_eq!(peekable.peek_nth(1).cloned(), Some(2));
-        assert_eq!(peekable.peek_nth(2).cloned(), None);
+        assert_eq!(peekable.peek_nth::<1>().cloned(), Some(2));
+        assert_eq!(peekable.peek_nth::<2>().cloned(), None);
 
         assert_eq!(peekable.next(), Some(1));
         assert_eq!(peekable.peek().cloned(), Some(2));
-        assert_eq!(peekable.peek_nth(1).cloned(), Some(3));
-        assert_eq!(peekable.peek_nth(2).cloned(), None);
+        assert_eq!(peekable.peek_nth::<1>().cloned(), Some(3));
+        assert_eq!(peekable.peek_nth::<2>().cloned(), None);
 
         assert_eq!(peekable.next(), Some(2));
         assert_eq!(peekable.peek().cloned(), Some(3));
-        assert_eq!(peekable.peek_nth(1).cloned(), None);
-        assert_eq!(peekable.peek_nth(2).cloned(), None);
+        assert_eq!(peekable.peek_nth::<1>().cloned(), None);
+        assert_eq!(peekable.peek_nth::<2>().cloned(), None);
 
         assert_eq!(peekable.next(), Some(3));
         assert_eq!(peekable.peek().cloned(), None);
-        assert_eq!(peekable.peek_nth(1).cloned(), None);
-        assert_eq!(peekable.peek_nth(2).cloned(), None);
+        assert_eq!(peekable.peek_nth::<1>().cloned(), None);
+        assert_eq!(peekable.peek_nth::<2>().cloned(), None);
     }
 
     #[test]
@@ -140,8 +140,8 @@ mod tests {
         assert_eq!(peekable.next(), Some(1));
         assert_eq!(peekable.next(), Some(2));
         assert_eq!(peekable.next(), Some(3));
-        assert_eq!(peekable.peek_nth(0).cloned(), None);
-        assert_eq!(peekable.peek_nth(1).cloned(), None);
-        assert_eq!(peekable.peek_nth(2).cloned(), None);
+        assert_eq!(peekable.peek_nth::<0>().cloned(), None);
+        assert_eq!(peekable.peek_nth::<1>().cloned(), None);
+        assert_eq!(peekable.peek_nth::<2>().cloned(), None);
     }
 }
